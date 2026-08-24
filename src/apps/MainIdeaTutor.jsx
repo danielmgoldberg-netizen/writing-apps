@@ -19,7 +19,7 @@ function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, 
         "App":             "main-idea",
         "Text Title":      String(textTitle     || ""),
         "Attempt Number":  Number(attemptNumber || 1),
-        "Submission":      String(submission    || ""),
+        "Submission":      String(submission    || "").slice(0, 500),
         "Total Score":     Number(totalScore    || 0),
         "Max Score":       5,
         "Session Best":    Number(sessionBest   || 0),
@@ -32,7 +32,7 @@ function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, 
       });
       if (!res.ok) {
         const text = await res.text().catch(() => "");
-        if (_setLogError) _setLogError(`Log error ${res.status}: ${text.slice(0, 150)}`);
+        if (_setLogError) _setLogError(`Log error ${res.status}: ${text.slice(0, 200)} | Payload: ${JSON.stringify(payload).slice(0, 200)}`);
       } else {
         if (_setLogError) _setLogError("Log OK: row was sent to Airtable.");
       }
