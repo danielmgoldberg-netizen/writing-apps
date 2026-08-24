@@ -579,8 +579,9 @@ export default function App({ onBack }) {
 
   // Single call to the API + parse pipeline. Returns the parsed feedback
   // object on success or throws with a descriptive message on failure.
+  // Routed through the Vercel proxy so the Anthropic API key stays server-side.
   const callGrader = async (userPrompt, trimmedSubmission) => {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://writing-app-logger.vercel.app/api/grade", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
