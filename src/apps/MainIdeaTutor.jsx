@@ -668,20 +668,17 @@ export default function App({ onBack }) {
       setCurrentFeedback(feedback);
       const nextBest = Math.max(sessionBest, feedback.totalScore);
       setSessionBest(nextBest);
-      setAttempts(prev => {
-        const next = [...prev, { sentence: trimmed, feedback }];
-        logToAirtable({
-          firstName,
-          surname,
-          teacher,
-          textTitle:     selectedText.title,
-          attemptNumber: next.length,
-          submission:    trimmed,
-          totalScore:    feedback.totalScore,
-          sessionBest:   nextBest,
-          scores:        feedback.scores,
-        });
-        return next;
+      setAttempts(prev => [...prev, { sentence: trimmed, feedback }]);
+      logToAirtable({
+        firstName,
+        surname,
+        teacher,
+        textTitle:     selectedText.title,
+        attemptNumber: attempts.length + 1,
+        submission:    trimmed,
+        totalScore:    feedback.totalScore,
+        sessionBest:   nextBest,
+        scores:        feedback.scores,
       });
       setStudentSentence(trimmed);
       setEditText(trimmed);
