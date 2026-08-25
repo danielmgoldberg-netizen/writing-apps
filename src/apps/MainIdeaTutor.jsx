@@ -6,24 +6,22 @@ import { useState, useRef, useEffect } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 const LOGGER_URL = "https://writing-app-logger.vercel.app/api/log";
 
-function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, submission, totalScore, sessionBest, scores }) {
+function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, submission, totalScore }) {
   setTimeout(() => {
     try {
       fetch(LOGGER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          "Student Name":    String(`${firstName} ${surname}`.trim()),
-          "Teacher":         String(teacher      || ""),
-          "Timestamp":       new Date().toISOString(),
-          "App":             "main-idea",
-          "Text Title":      String(textTitle     || ""),
-          "Attempt Number":  Number(attemptNumber || 1),
-          "Submission":      String(submission    || "").slice(0, 500),
-          "Total Score":     Number(totalScore    || 0),
-          "Max Score":       5,
-          "Session Best":    Number(sessionBest   || 0),
-          "Score Breakdown": JSON.stringify(scores || {})
+          "Student Name": String(`${firstName} ${surname}`.trim()),
+          "Teacher":      String(teacher      || ""),
+          "Timestamp":    new Date().toISOString(),
+          "App":          "main-idea",
+          "Text Title":   String(textTitle    || ""),
+          "Attempts":     Number(attemptNumber || 1),
+          "Submission":   String(submission   || "").slice(0, 500),
+          "Score":        Number(totalScore   || 0),
+          "Max Score":    5
         })
       }).catch(() => {});
     } catch (e) { /* never surface */ }
@@ -666,8 +664,7 @@ export default function App({ onBack }) {
 
     if (feedback) {
       setCurrentFeedback(feedback);
-      const nextBest = Math.max(sessionBest, feedback.totalScore);
-      setSessionBest(nextBest);
+      setSessionBest(prev => Math.max(prev, feedback.totalScore));
       setAttempts(prev => [...prev, { sentence: trimmed, feedback }]);
       logToAirtable({
         firstName,
@@ -677,8 +674,6 @@ export default function App({ onBack }) {
         attemptNumber: attempts.length + 1,
         submission:    trimmed,
         totalScore:    feedback.totalScore,
-        sessionBest:   nextBest,
-        scores:        feedback.scores,
       });
       setStudentSentence(trimmed);
       setEditText(trimmed);
