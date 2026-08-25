@@ -6,39 +6,27 @@ import { useState, useRef, useEffect } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 const LOGGER_URL = "https://writing-app-logger.vercel.app/api/log";
 
-// Logging function with visible error reporting for debugging.
-// Remove the setLogError calls once logging is confirmed working.
-let _setLogError = null;
 function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, submission, totalScore, sessionBest, scores }) {
-  setTimeout(async () => {
+  setTimeout(() => {
     try {
-      const payload = {
-        "Student Name":    `${firstName} ${surname}`.trim(),
-        "Teacher":         teacher || "",
-        "Timestamp":       new Date().toISOString(),
-        "App":             "main-idea",
-        "Text Title":      String(textTitle     || ""),
-        "Attempt Number":  Number(attemptNumber || 1),
-        "Submission":      String(submission    || "").slice(0, 500),
-        "Total Score":     Number(totalScore    || 0),
-        "Max Score":       5,
-        "Session Best":    Number(sessionBest   || 0),
-        "Score Breakdown": JSON.stringify(scores || {})
-      };
-      const res = await fetch(LOGGER_URL, {
+      fetch(LOGGER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        if (_setLogError) _setLogError(`Log error ${res.status}: ${text.slice(0, 200)} | Payload: ${JSON.stringify(payload).slice(0, 200)}`);
-      } else {
-        if (_setLogError) _setLogError("Log OK: row was sent to Airtable.");
-      }
-    } catch (e) {
-      if (_setLogError) _setLogError(`Log network error: ${e.message}`);
-    }
+        body: JSON.stringify({
+          "Student Name":    String(`${firstName} ${surname}`.trim()),
+          "Teacher":         String(teacher      || ""),
+          "Timestamp":       new Date().toISOString(),
+          "App":             "main-idea",
+          "Text Title":      String(textTitle     || ""),
+          "Attempt Number":  Number(attemptNumber || 1),
+          "Submission":      String(submission    || "").slice(0, 500),
+          "Total Score":     Number(totalScore    || 0),
+          "Max Score":       5,
+          "Session Best":    Number(sessionBest   || 0),
+          "Score Breakdown": JSON.stringify(scores || {})
+        })
+      }).catch(() => {});
+    } catch (e) { /* never surface */ }
   }, 0);
 }
 
@@ -571,9 +559,7 @@ export default function App({ onBack }) {
   const [teacher, setTeacher] = useState("");
   const [welcomed, setWelcomed] = useState(false);
   const [sessionBest, setSessionBest] = useState(0);
-  const [logError, setLogError] = useState(null);
   const [selectedTextId, setSelectedTextId] = useState("");
-  useEffect(() => { _setLogError = setLogError; }, []);
   const [studentSentence, setStudentSentence] = useState("");
   const [attempts, setAttempts] = useState([]);
   const [currentFeedback, setCurrentFeedback] = useState(null);
@@ -1019,20 +1005,6 @@ export default function App({ onBack }) {
               <span>👤 <strong style={{ color: "#1F1B16" }}>{firstName} {surname}</strong></span>
               <span>📚 <strong style={{ color: "#1F1B16" }}>{teacher}'s class</strong></span>
             </div>
-
-            {logError && (
-              <div style={{
-                marginBottom: 14,
-                padding: "8px 14px",
-                background: logError.startsWith("Log OK") ? "#E8EFE9" : "#F8E5DC",
-                border: `1px solid ${logError.startsWith("Log OK") ? "#B5C9B8" : "#E0B8A0"}`,
-                borderRadius: 8,
-                fontSize: 13,
-                color: logError.startsWith("Log OK") ? "#2D5043" : "#7A3818"
-              }}>
-                {logError.startsWith("Log OK") ? "✅ " : "⚠️ "}{logError}
-              </div>
-            )}
 
         <section style={cardStyle}>
           <h2 style={stepTitleStyle}>
