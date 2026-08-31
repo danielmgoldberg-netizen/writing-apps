@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MainIdeaTutor from "./apps/MainIdeaTutor.jsx";
 import OpinionWriter from "./apps/OpinionWriter.jsx";
+import A2EconomicsExpansion from "./apps/A2EconomicsExpansion.jsx";
 
 const cardStyle = {
   background: "#FFFFFF",
@@ -17,6 +18,7 @@ export default function App() {
 
   if (current === "main-idea") return <MainIdeaTutor onBack={() => setCurrent(null)} />;
   if (current === "opinion") return <OpinionWriter onBack={() => setCurrent(null)} />;
+  if (current === "a2-economics") return <A2EconomicsExpansion onBack={() => setCurrent(null)} />;
 
   return (
     <div style={{
@@ -91,6 +93,33 @@ export default function App() {
           </div>
           <div style={{ fontSize: 14.5, color: "#6B5D54", lineHeight: 1.55 }}>
             Write two sentences sharing your opinion about a text. Earn up to 10 points.
+          </div>
+        </div>
+
+        <div
+          style={cardStyle}
+          onClick={() => setCurrent("a2-economics")}
+          onMouseEnter={e => {
+            e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)";
+            e.currentTarget.style.transform = "translateY(-2px)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.boxShadow = "none";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          <div style={{ fontSize: 28, marginBottom: 8 }}>📊</div>
+          <div style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 22,
+            fontWeight: 500,
+            color: "#1F1B16",
+            marginBottom: 6
+          }}>
+            Business Expansion Report
+          </div>
+          <div style={{ fontSize: 14.5, color: "#6B5D54", lineHeight: 1.55 }}>
+            Write a three-paragraph business expansion report recommending a country for an Israeli company. Earn up to 100 points.
           </div>
         </div>
       </div>
