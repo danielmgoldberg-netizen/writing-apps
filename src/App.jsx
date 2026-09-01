@@ -182,10 +182,8 @@ export default function App() {
                 onChange={e => setTeacher(e.target.value)}
               >
                 <option value="">Select your teacher...</option>
-                <option value="Yohanna">Yohanna</option>
-                <option value="Rita">Rita</option>
-                <option value="Keren">Keren</option>
                 <option value="Daniel">Daniel</option>
+                <option value="Keren">Keren</option>
               </select>
             </div>
 
