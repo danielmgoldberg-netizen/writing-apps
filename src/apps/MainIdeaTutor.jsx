@@ -551,6 +551,89 @@ const CATEGORY_DOTS = {
   language: "#5A4A8A"
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// LANGUAGE REFERENCE DRAWER
+// A collapsible cheat-sheet the student can open above Step 1. Purely
+// presentational; all open/closed state lives in the App component.
+// ─────────────────────────────────────────────────────────────────────────────
+const CONNECTOR_GROUPS = [
+  { label: "Addition", items: ["and", "also", "in addition", "furthermore", "as well as"] },
+  { label: "Contrast", items: ["but", "however", "although", "on the other hand"] },
+  { label: "Cause / Result", items: ["because", "so", "therefore", "as a result"] },
+  { label: "Example", items: ["for example", "for instance", "such as"] },
+  { label: "Sequence", items: ["first", "then", "finally", "next"] }
+];
+
+function LangSection({ icon, title, closed, onToggle, children }) {
+  return (
+    <div className="mit-lang-section">
+      <button className="mit-lang-sec-toggle" onClick={onToggle} aria-expanded={!closed}>
+        <span className="mit-lang-sec-title">{icon} {title}</span>
+        <span className={"mit-chevron" + (closed ? "" : " open")}>▾</span>
+      </button>
+      <div className={"mit-lang-sec-body" + (closed ? "" : " open")}>
+        <div className="mit-lang-sec-inner">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function LanguageHelpDrawer({ open, closed, toggle }) {
+  return (
+    <div className={"mit-drawer-wrap" + (open ? " open" : "")}>
+      <div className="mit-drawer">
+        <LangSection icon="🔗" title="Connectors" closed={closed.connectors} onToggle={toggle.connectors}>
+          {CONNECTOR_GROUPS.map(g => (
+            <div className="mit-lang-group" key={g.label}>
+              <div className="mit-lang-group-label">{g.label}</div>
+              <div>
+                {g.items.map(it => (
+                  <span className="mit-conn-pill" key={it}>{it}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </LangSection>
+
+        <LangSection icon="✅" title="Subject-Verb Agreement" closed={closed.agreement} onToggle={toggle.agreement}>
+          <ul className="mit-lang-list">
+            <li>I / you / we / they → <strong>write, read, study</strong></li>
+            <li>he / she / it → <strong>writes, reads, studies</strong></li>
+            <li>Common mistake: <span className="mit-wrong">"The students writes" ❌</span> → <span className="mit-right">"The students write" ✓</span></li>
+            <li>With "and": <span className="mit-right">"Daniel and Keren are..." ✓</span></li>
+            <li>With "or": <span className="mit-right">"Daniel or Keren is..." ✓</span></li>
+          </ul>
+        </LangSection>
+
+        <LangSection icon="⏰" title="Basic Tenses" closed={closed.tenses} onToggle={toggle.tenses}>
+          <ul className="mit-lang-list">
+            <li>Present simple: "The text explains..."</li>
+            <li>Present continuous: "The author is describing..."</li>
+            <li>Avoid: <span className="mit-wrong">"The text is about to explain..." ❌</span></li>
+          </ul>
+        </LangSection>
+
+        <LangSection icon="✏️" title="Punctuation Reminders" closed={closed.punctuation} onToggle={toggle.punctuation}>
+          <ul className="mit-lang-list">
+            <li>Always end your sentence with a period.</li>
+            <li>Capitalize the first word of every sentence.</li>
+            <li>Always write "I" as a capital letter.</li>
+            <li>Capitalize proper nouns (names, countries, titles).</li>
+          </ul>
+        </LangSection>
+
+        <LangSection icon="📝" title="Sentence Structure" closed={closed.structure} onToggle={toggle.structure}>
+          <ul className="mit-lang-list">
+            <li>Remember to follow the structure in the template — deviating from it will affect your grade.</li>
+            <li>Use connectors to join two ideas in one sentence.</li>
+            <li>Avoid very long sentences — one idea per sentence is clearest.</li>
+          </ul>
+        </LangSection>
+      </div>
+    </div>
+  );
+}
+
 export default function App({ onBack }) {
   const [firstName, setFirstName] = useState("");
   const [surname, setSurname] = useState("");
@@ -565,6 +648,15 @@ export default function App({ onBack }) {
   const [error, setError] = useState(null);
   const [editText, setEditText] = useState("");
   const feedbackRef = useRef(null);
+
+  // Language reference drawer: the drawer itself plus each of its 5 sections,
+  // all closed by default.
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [connectorsClosed, setConnectorsClosed] = useState(true);
+  const [agreementClosed, setAgreementClosed] = useState(true);
+  const [tensesClosed, setTensesClosed] = useState(true);
+  const [punctuationClosed, setPunctuationClosed] = useState(true);
+  const [structureClosed, setStructureClosed] = useState(true);
 
   const selectedText = TEXTS.find(t => t.id === selectedTextId);
   const attemptNumber = attempts.length + 1;
@@ -872,6 +964,117 @@ export default function App({ onBack }) {
           from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
+        .mit-lang-help-row {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 12px;
+        }
+        .mit-lang-help-btn {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #2D5043;
+          background: rgba(45, 80, 67, 0.08);
+          border: 1px solid rgba(45, 80, 67, 0.3);
+          border-radius: 8px;
+          padding: 7px 14px;
+          cursor: pointer;
+          transition: background 0.15s ease, transform 0.08s ease;
+        }
+        .mit-lang-help-btn:hover { background: rgba(45, 80, 67, 0.16); }
+        .mit-lang-help-btn:active { transform: translateY(1px); }
+
+        .mit-drawer-wrap {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          margin-bottom: 0;
+          transition: max-height 0.4s ease, opacity 0.3s ease, margin-bottom 0.4s ease;
+        }
+        .mit-drawer-wrap.open {
+          max-height: 3000px;
+          opacity: 1;
+          margin-bottom: 18px;
+        }
+        .mit-drawer {
+          background: #FAF6ED;
+          border: 1px solid #E8E0D0;
+          border-top: 3px solid #2D5043;
+          border-radius: 14px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+          padding: 4px 24px 10px;
+        }
+
+        .mit-lang-section { border-bottom: 1px solid #E8E0D0; }
+        .mit-lang-section:last-child { border-bottom: none; }
+        .mit-lang-sec-toggle {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 13px 0;
+          text-align: left;
+        }
+        .mit-lang-sec-title {
+          font-family: 'Fraunces', serif;
+          font-size: 15.5px;
+          font-weight: 500;
+          color: #1F1B16;
+        }
+        .mit-chevron {
+          color: #2D5043;
+          font-size: 13px;
+          flex-shrink: 0;
+          transition: transform 0.25s ease;
+        }
+        .mit-chevron.open { transform: rotate(180deg); }
+        .mit-lang-sec-body {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: max-height 0.35s ease, opacity 0.25s ease;
+        }
+        .mit-lang-sec-body.open {
+          max-height: 1400px;
+          opacity: 1;
+        }
+        .mit-lang-sec-inner {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 13.5px;
+          line-height: 1.6;
+          color: #2A2520;
+          padding: 0 2px 14px;
+        }
+        .mit-lang-group { margin-bottom: 10px; }
+        .mit-lang-group:last-child { margin-bottom: 0; }
+        .mit-lang-group-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: #6B5D54;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          margin-bottom: 5px;
+        }
+        .mit-conn-pill {
+          display: inline-block;
+          background: #E8EFE9;
+          color: #2D5043;
+          font-size: 12.5px;
+          font-weight: 500;
+          padding: 3px 10px;
+          border-radius: 999px;
+          margin: 0 5px 5px 0;
+        }
+        .mit-lang-list { margin: 0; padding-left: 18px; }
+        .mit-lang-list li { margin-bottom: 5px; }
+        .mit-lang-list li:last-child { margin-bottom: 0; }
+        .mit-wrong { color: #B85C38; font-weight: 600; }
+        .mit-right { color: #2D5043; font-weight: 600; }
       `}</style>
 
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
@@ -1000,6 +1203,34 @@ export default function App({ onBack }) {
               <span>👤 <strong style={{ color: "#1F1B16" }}>{firstName} {surname}</strong></span>
               <span>📚 <strong style={{ color: "#1F1B16" }}>{teacher}'s class</strong></span>
             </div>
+
+        <div className="mit-lang-help-row">
+          <button
+            className="mit-lang-help-btn"
+            onClick={() => setDrawerOpen(o => !o)}
+            aria-expanded={drawerOpen}
+          >
+            {drawerOpen ? "📚 Close Language Help" : "📚 Language Help"}
+          </button>
+        </div>
+
+        <LanguageHelpDrawer
+          open={drawerOpen}
+          closed={{
+            connectors: connectorsClosed,
+            agreement: agreementClosed,
+            tenses: tensesClosed,
+            punctuation: punctuationClosed,
+            structure: structureClosed
+          }}
+          toggle={{
+            connectors: () => setConnectorsClosed(c => !c),
+            agreement: () => setAgreementClosed(c => !c),
+            tenses: () => setTensesClosed(c => !c),
+            punctuation: () => setPunctuationClosed(c => !c),
+            structure: () => setStructureClosed(c => !c)
+          }}
+        />
 
         <section style={cardStyle}>
           <h2 style={stepTitleStyle}>
