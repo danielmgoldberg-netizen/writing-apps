@@ -634,11 +634,7 @@ function LanguageHelpDrawer({ open, closed, toggle }) {
   );
 }
 
-export default function App({ onBack }) {
-  const [firstName, setFirstName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [teacher, setTeacher] = useState("");
-  const [welcomed, setWelcomed] = useState(false);
+export default function App({ onBack, firstName, surname, teacher }) {
   const [sessionBest, setSessionBest] = useState(0);
   const [selectedTextId, setSelectedTextId] = useState("");
   const [studentSentence, setStudentSentence] = useState("");
@@ -1119,78 +1115,7 @@ export default function App({ onBack }) {
           </p>
         </header>
 
-        {!welcomed ? (
-          <section style={cardStyle} className="mit-fade-in">
-            <h2 style={stepTitleStyle}>
-              <span style={stepNumberStyle}>👋</span>
-              Welcome! Please introduce yourself.
-            </h2>
-            <p style={{ fontSize: 14.5, color: "#5A4D43", marginBottom: 18, lineHeight: 1.6 }}>
-              Fill in all three fields to begin. 😊
-            </p>
-
-            <div style={{ display: "flex", gap: 12, marginBottom: 14, flexWrap: "wrap" }}>
-              <div style={{ flex: 1, minWidth: 160 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#6B5D54", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
-                  First name
-                </label>
-                <input
-                  type="text"
-                  className="mit-select"
-                  style={{ fontSize: 15, padding: "11px 14px", width: "100%" }}
-                  placeholder="e.g. Yuval"
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                />
-              </div>
-              <div style={{ flex: 1, minWidth: 160 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#6B5D54", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
-                  Surname
-                </label>
-                <input
-                  type="text"
-                  className="mit-select"
-                  style={{ fontSize: 15, padding: "11px 14px", width: "100%" }}
-                  placeholder="e.g. Cohen"
-                  value={surname}
-                  onChange={e => setSurname(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#6B5D54", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
-                My teacher is
-              </label>
-              <select
-                className="mit-select"
-                value={teacher}
-                onChange={e => setTeacher(e.target.value)}
-              >
-                <option value="">Select your teacher...</option>
-                <option value="Daniel">Daniel</option>
-                <option value="Keren">Keren</option>
-              </select>
-            </div>
-
-            <div style={{ textAlign: "right" }}>
-              <button
-                className="mit-btn mit-btn-primary"
-                disabled={!firstName.trim() || !surname.trim() || !teacher}
-                onClick={() => setWelcomed(true)}
-              >
-                Start ➜
-              </button>
-            </div>
-
-            {(!firstName.trim() || !surname.trim() || !teacher) && (firstName || surname || teacher) && (
-              <div style={{ marginTop: 12, fontSize: 13, color: "#8A6F30", fontStyle: "italic" }}>
-                Please fill in all three fields to continue.
-              </div>
-            )}
-          </section>
-        ) : (
-          <>
+        <>
             <div style={{
               fontSize: 13,
               color: "#6B5D54",
@@ -1601,7 +1526,6 @@ export default function App({ onBack }) {
         )}
 
           </>
-        )}
 
       </div>
     </div>
