@@ -513,7 +513,7 @@ function ScoreRing({ score, max = 10 }) {
   const offset = circumference * (1 - progress);
   const color = score === max ? "#28CD41" : score >= max * 0.6 ? "#FF9500" : "#FF3B30";
   return (
-    <div style={{ position: "relative", width: 96, height: 96, flexShrink: 0 }}>
+    <div style={{ position: "relative", width: 96, height: 96, flexShrink: 0, background: "#FFFFFF", borderRadius: "50%", boxShadow: "var(--apple-shadow-raised)" }}>
       <svg width="96" height="96" viewBox="0 0 96 96">
         <circle cx="48" cy="48" r={radius} fill="none" stroke="rgba(0, 0, 0, 0.08)" strokeWidth="7" />
         <circle
@@ -539,7 +539,8 @@ function CategoryBar({ label, score, max }) {
   const pct = (score / max) * 100;
   const earned = score === max;
   return (
-    <div style={{ marginBottom: 12 }}>
+    <div className="mit-bar" style={{ marginBottom: 12 }}>
+      <span className="mit-bar-tip" aria-hidden="true">{label}: {score} / {max}</span>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
         <span style={{ fontSize: "var(--ds-body)", color: "var(--ds-label)", fontWeight: 500 }}>{label}</span>
         <span style={{
@@ -550,7 +551,7 @@ function CategoryBar({ label, score, max }) {
         </span>
       </div>
       <div style={{ height: 6, background: "rgba(0, 0, 0, 0.08)", borderRadius: 999, overflow: "hidden" }}>
-        <div style={{
+        <div className="mit-bar-fill" style={{
           height: "100%", width: `${pct}%`,
           background: earned ? "#28CD41" : "#FF9500",
           borderRadius: 999,
@@ -831,7 +832,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
   const cardStyle = {
     background: "#FFFFFF",
-    border: "0.5px solid rgba(0, 0, 0, 0.1)",
+    border: "1px solid var(--apple-border)",
     borderRadius: 12,
     padding: "22px 24px",
     marginBottom: 16,
@@ -876,20 +877,25 @@ export default function App({ onBack, firstName, surname, teacher }) {
     marginBottom: 8
   };
 
+  const scrollToStep = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const sidebarSections = [
     {
       label: "Exercise",
       items: [{ id: "menu", label: "All exercises", icon: "back", onClick: onBack }]
     },
     {
-      label: "Texts",
-      items: TEXTS.map(t => ({
-        id: t.id,
-        label: t.title,
-        icon: "doc",
-        active: t.id === selectedTextId,
-        onClick: () => handleSelectText(t.id)
-      }))
+      // Page structure only; choosing a text happens in the Step 1 dropdown.
+      label: "Steps",
+      items: [
+        { id: "mit-step-1", label: "Choose a text", icon: "list", onClick: () => scrollToStep("mit-step-1") },
+        selectedText && { id: "mit-step-2", label: "Read the text", icon: "book", onClick: () => scrollToStep("mit-step-2") },
+        selectedText && { id: "mit-step-3", label: "Write your opinion", icon: "pencil", onClick: () => scrollToStep("mit-step-3") },
+        currentFeedback && { id: "mit-step-4", label: "Your feedback", icon: "bubble", onClick: () => scrollToStep("mit-step-4") }
+      ].filter(Boolean)
     }
   ];
 
@@ -985,13 +991,14 @@ export default function App({ onBack, firstName, surname, teacher }) {
           padding: 0 18px;
           border-radius: 8px;
           cursor: default;
-          transition: filter 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+          transition: all 0.2s var(--apple-ease-out);
           border: none;
           display: inline-flex;
           align-items: center;
           justify-content: center;
         }
-        .mit-btn:active:not(:disabled) { filter: brightness(0.92); }
+        .mit-btn:hover:not(:disabled) { transform: translateY(-1px); }
+        .mit-btn:active:not(:disabled) { transform: scale(0.97); filter: brightness(0.94); }
         .mit-btn:disabled { opacity: 0.4; }
         .mit-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.35); }
 
@@ -1000,7 +1007,10 @@ export default function App({ onBack, firstName, surname, teacher }) {
           color: #FFFFFF;
           box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.15);
         }
-        .mit-btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
+        .mit-btn-primary:hover:not(:disabled) {
+          filter: brightness(1.05);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 6px 16px rgba(0, 122, 255, 0.3);
+        }
 
         .mit-btn-secondary {
           background: #FFFFFF;
@@ -1008,7 +1018,10 @@ export default function App({ onBack, firstName, surname, teacher }) {
           border: 0.5px solid rgba(0, 0, 0, 0.15);
           box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.08);
         }
-        .mit-btn-secondary:hover:not(:disabled) { background: #FAFAFA; }
+        .mit-btn-secondary:hover:not(:disabled) {
+          background: #FFFFFF;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
 
         .mit-btn-template {
           font-family: inherit;
@@ -1021,10 +1034,14 @@ export default function App({ onBack, firstName, surname, teacher }) {
           min-height: 26px;
           padding: 0 12px;
           cursor: default;
-          transition: background 0.15s ease;
+          transition: all 0.2s var(--apple-ease-out);
         }
-        .mit-btn-template:hover { background: rgba(0, 122, 255, 0.16); }
-        .mit-btn-template:active { background: rgba(0, 122, 255, 0.22); }
+        .mit-btn-template:hover {
+          background: rgba(0, 122, 255, 0.16);
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 122, 255, 0.18);
+        }
+        .mit-btn-template:active { background: rgba(0, 122, 255, 0.22); transform: scale(0.97); }
 
         .mit-text-body {
           font-size: var(--ds-title-3);
@@ -1046,31 +1063,101 @@ export default function App({ onBack, firstName, surname, teacher }) {
         }
         @keyframes mit-spin { to { transform: rotate(360deg); } }
 
-        .mit-fade-in { animation: mit-fade-in 0.45s var(--ds-ease) both; }
+        .mit-fade-in { animation: mit-fade-in 0.35s ease-out both; }
         @keyframes mit-fade-in {
-          from { opacity: 0; transform: translateY(6px); }
+          from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
-        .mit-drawer-wrap {
-          max-height: 0;
+        /* Score bars: grow from 0 on render, staggered, plus a hover popover */
+        .mit-bar { position: relative; }
+        .mit-bar-fill { animation: mit-bar-grow 0.5s ease-out both; }
+        .mit-bars > .mit-bar:nth-child(2) .mit-bar-fill { animation-delay: 0.08s; }
+        .mit-bars > .mit-bar:nth-child(3) .mit-bar-fill { animation-delay: 0.16s; }
+        .mit-bars > .mit-bar:nth-child(4) .mit-bar-fill { animation-delay: 0.24s; }
+        @keyframes mit-bar-grow { from { width: 0; } }
+        .mit-bar-tip {
+          position: absolute;
+          left: 50%;
+          bottom: calc(100% + 4px);
+          z-index: 2;
+          padding: 5px 10px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: saturate(180%) blur(20px);
+          -webkit-backdrop-filter: saturate(180%) blur(20px);
+          border: 1px solid var(--apple-border);
+          box-shadow: var(--apple-shadow-raised);
+          font-size: var(--ds-callout);
+          font-weight: 500;
+          color: var(--ds-label);
+          white-space: nowrap;
+          pointer-events: none;
+          opacity: 0;
+          transform: translate(-50%, 4px) scale(0.96);
+          transition: opacity 0.15s ease-out, transform 0.3s var(--apple-spring);
+        }
+        .mit-bar:hover .mit-bar-tip { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+        /* Issue cards: collapsible with a spring */
+        .mit-issue { transition: all 0.2s var(--apple-ease-out); interpolate-size: allow-keywords; }
+        .mit-issue:hover { transform: translateY(-1px); box-shadow: var(--apple-shadow-lifted) !important; }
+        .mit-issue-summary {
+          display: flex;
+          align-items: center;
+          list-style: none;
+          cursor: default;
+          user-select: none;
+        }
+        .mit-issue-summary::-webkit-details-marker { display: none; }
+        .mit-issue-chevron {
+          margin-left: auto;
+          font-size: 16px;
+          line-height: 1;
+          color: var(--ds-tertiary-label);
+          transition: transform 0.4s var(--apple-spring);
+        }
+        .mit-issue[open] .mit-issue-chevron { transform: rotate(90deg); }
+        .mit-issue-body { padding-top: 4px; transform-origin: top center; }
+        .mit-issue[open] .mit-issue-body { animation: mit-spring-open 0.45s var(--apple-spring) both; }
+        @keyframes mit-spring-open {
+          from { opacity: 0; transform: translateY(-6px) scaleY(0.94); }
+        }
+        /* Animated collapse where the browser supports it (Chrome 131+) */
+        .mit-issue::details-content {
+          block-size: 0;
           overflow: hidden;
+          transition: block-size 0.45s var(--apple-spring), content-visibility 0.45s allow-discrete;
+        }
+        .mit-issue[open]::details-content { block-size: auto; }
+
+        /* Drawer: height opens via grid rows; the panel itself springs into place */
+        .mit-drawer-wrap {
+          display: grid;
+          grid-template-rows: 0fr;
           opacity: 0;
           margin-bottom: 0;
-          transition: max-height 0.4s var(--ds-ease), opacity 0.3s ease, margin-bottom 0.4s var(--ds-ease);
+          transition: grid-template-rows 0.45s var(--apple-spring), opacity 0.25s ease-out, margin-bottom 0.45s var(--apple-spring);
         }
         .mit-drawer-wrap.open {
-          max-height: 3000px;
+          grid-template-rows: 1fr;
           opacity: 1;
           margin-bottom: 16px;
         }
         .mit-drawer {
+          min-height: 0;
+          overflow: hidden;
           background: #FFFFFF;
-          border: 0.5px solid rgba(0, 0, 0, 0.1);
+          border: 1px solid var(--apple-border);
           border-radius: 12px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.04);
+          box-shadow: var(--apple-shadow-raised);
           padding: 2px 20px 8px;
+          transform: translateY(-12px) scale(0.98);
+          transform-origin: top center;
+          transition: transform 0.5s var(--apple-spring), padding 0.45s var(--apple-spring), border-width 0.45s ease;
         }
+        .mit-drawer-wrap:not(.open) > .mit-drawer { padding-top: 0; padding-bottom: 0; border-width: 0; }
+        .mit-drawer-wrap.open > .mit-drawer { transform: none; }
 
         .mit-lang-section { border-bottom: 0.5px solid var(--ds-separator); }
         .mit-lang-section:last-child { border-bottom: none; }
@@ -1083,10 +1170,16 @@ export default function App({ onBack, firstName, surname, teacher }) {
           background: none;
           border: none;
           cursor: default;
-          padding: 12px 0;
+          padding: 12px 8px;
+          margin: 0 -8px;
+          width: calc(100% + 16px);
+          border-radius: 8px;
           text-align: left;
           font-family: inherit;
+          transition: all 0.2s var(--apple-ease-out);
         }
+        .mit-lang-sec-toggle:hover { background: #F5F5F7; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); }
+        .mit-lang-sec-toggle:active { transform: scale(0.97); }
         .mit-lang-sec-title {
           font-family: inherit;
           font-size: var(--ds-headline);
@@ -1144,8 +1237,9 @@ export default function App({ onBack, firstName, surname, teacher }) {
         .mit-right { color: #248A3D; font-weight: 600; }
 
         @media (prefers-reduced-motion: reduce) {
-          .mit-fade-in, .mit-spin { animation-duration: 0.01ms; }
-          .mit-drawer-wrap, .mit-lang-sec-body, .mit-chevron { transition: none; }
+          .mit-fade-in, .mit-spin, .mit-bar-fill, .mit-issue[open] .mit-issue-body { animation-duration: 0.01ms; }
+          .mit-drawer-wrap, .mit-drawer, .mit-lang-sec-body, .mit-chevron, .mit-btn, .mit-btn-template,
+          .mit-lang-sec-toggle, .mit-issue, .mit-issue-chevron, .mit-bar-tip, .mit-issue::details-content { transition: none; }
         }
       `}</style>
 
@@ -1193,7 +1287,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
               }}
             />
 
-            <section style={cardStyle}>
+            <section id="mit-step-1" style={cardStyle}>
               <h2 style={stepTitleStyle}>
                 <span style={stepNumberStyle}>1</span>
                 📚 Choose a text to write about
@@ -1211,7 +1305,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
             </section>
 
         {selectedText && (
-          <section style={cardStyle} className="mit-fade-in">
+          <section id="mit-step-2" style={cardStyle} className="mit-fade-in">
             <h2 style={stepTitleStyle}>
               <span style={stepNumberStyle}>2</span>
               👀 Read the text
@@ -1245,7 +1339,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
         )}
 
         {selectedText && (
-          <section style={cardStyle} className="mit-fade-in">
+          <section id="mit-step-3" style={cardStyle} className="mit-fade-in">
             <h2 style={stepTitleStyle}>
               <span style={stepNumberStyle}>3</span>
               ✍️ Write your opinion
@@ -1390,8 +1484,9 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
         {currentFeedback && (
           <section
+            id="mit-step-4"
             ref={feedbackRef}
-            style={{ ...cardStyle, borderColor: "rgba(0, 0, 0, 0.14)" }}
+            style={{ ...cardStyle, boxShadow: "var(--apple-shadow-raised)" }}
             className="mit-fade-in"
           >
             <h2 style={stepTitleStyle}>
@@ -1419,7 +1514,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
               </div>
             </div>
 
-            <div style={{ marginBottom: 18 }}>
+            <div className="mit-bars" key={attempts.length} style={{ marginBottom: 18 }}>
               <CategoryBar label="Content" score={currentFeedback.scores.content} max={6} />
               <CategoryBar label="Sentence structure" score={currentFeedback.scores.structure} max={2} />
               <CategoryBar label="Language (grammar)" score={currentFeedback.scores.language} max={2} />
@@ -1431,25 +1526,27 @@ export default function App({ onBack, firstName, surname, teacher }) {
                   🔍 Things to look at
                 </div>
                 {currentFeedback.issues.map((issue, i) => (
-                  <div key={i} style={{
+                  <details key={i} open className="mit-issue" style={{
                     padding: "12px 14px 12px 16px",
-                    background: "#F5F5F7",
-                    border: "none",
+                    background: "#FFFFFF",
+                    border: "1px solid var(--apple-border)",
                     borderLeft: `3px solid ${CATEGORY_DOTS[issue.category] || "rgba(0, 0, 0, 0.5)"}`,
                     borderRadius: 8,
-                    marginBottom: 8
+                    marginBottom: 10,
+                    boxShadow: "var(--apple-shadow-raised)"
                   }}>
-                    <div style={{
+                    <summary className="mit-issue-summary" style={{
                       fontSize: "var(--ds-subheadline)",
                       textTransform: "uppercase",
                       letterSpacing: "0.04em",
                       color: CATEGORY_DOTS[issue.category] || "var(--ds-secondary-label)",
-                      fontWeight: 600,
-                      marginBottom: 4
+                      fontWeight: 600
                     }}>
                       <span style={{ marginRight: 6 }}>{CATEGORY_EMOJIS[issue.category] || "📝"}</span>
                       {CATEGORY_LABELS[issue.category] || issue.category}
-                    </div>
+                      <span className="mit-issue-chevron" aria-hidden="true">›</span>
+                    </summary>
+                    <div className="mit-issue-body">
                     <div style={{ fontSize: "var(--ds-title-3)", color: "var(--ds-label)", marginBottom: 4, lineHeight: 1.45 }}>
                       {issue.what}
                     </div>
@@ -1458,7 +1555,8 @@ export default function App({ onBack, firstName, surname, teacher }) {
                         💡 Hint: {issue.hint}
                       </div>
                     )}
-                  </div>
+                    </div>
+                  </details>
                 ))}
               </div>
             )}
