@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import DesktopShell from "../components/DesktopShell.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LOGGING CONFIG
@@ -838,11 +839,50 @@ export default function App({ onBack, firstName, surname, teacher }) {
     letterSpacing: "-0.01em"
   };
 
+  const sidebarSections = [
+    {
+      label: "Exercise",
+      items: [{ id: "menu", label: "All exercises", icon: "back", onClick: onBack }]
+    },
+    {
+      label: "Texts",
+      items: TEXTS.map(t => ({
+        id: t.id,
+        label: t.title,
+        icon: "doc",
+        active: t.id === selectedTextId,
+        onClick: () => handleSelectText(t.id)
+      }))
+    }
+  ];
+
   return (
+    <DesktopShell
+      title="Main Idea Writing Tutor"
+      subtitle={selectedText ? selectedText.title : "Choose a text to begin"}
+      sections={sidebarSections}
+      onClose={onBack}
+      footer={
+        <>
+          <div style={{ color: "#1D1D1F", fontWeight: 600 }}>{firstName} {surname}</div>
+          <div>{teacher}'s class</div>
+        </>
+      }
+      toolbarActions={
+        <button
+          className="ds-tool-btn"
+          onClick={() => setDrawerOpen(o => !o)}
+          aria-expanded={drawerOpen}
+          aria-pressed={drawerOpen}
+        >
+          📚 Language Help
+        </button>
+      }
+    >
     <div style={{
-      minHeight: "100vh",
       background: "#FAF6ED",
-      padding: "32px 20px 60px",
+      minHeight: "100%",
+      padding: "32px 28px 60px",
       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
       color: "#1F1B16"
     }}>
@@ -1076,24 +1116,6 @@ export default function App({ onBack, firstName, surname, teacher }) {
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
         <header style={{ marginBottom: 24, paddingLeft: 6 }}>
-          {onBack && (
-            <button
-              onClick={onBack}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 14,
-                color: "#6B5D54",
-                padding: "0 0 12px 0",
-                display: "flex",
-                alignItems: "center",
-                gap: 6
-              }}
-            >
-              ← Back to menu
-            </button>
-          )}
           <h1 style={{
             fontFamily: "'Fraunces', serif",
             fontSize: 32,
@@ -1116,29 +1138,6 @@ export default function App({ onBack, firstName, surname, teacher }) {
         </header>
 
         <>
-            <div style={{
-              fontSize: 13,
-              color: "#6B5D54",
-              marginBottom: 18,
-              paddingLeft: 6,
-              display: "flex",
-              gap: 16,
-              alignItems: "center"
-            }}>
-              <span>👤 <strong style={{ color: "#1F1B16" }}>{firstName} {surname}</strong></span>
-              <span>📚 <strong style={{ color: "#1F1B16" }}>{teacher}'s class</strong></span>
-            </div>
-
-        <div className="mit-lang-help-row">
-          <button
-            className="mit-lang-help-btn"
-            onClick={() => setDrawerOpen(o => !o)}
-            aria-expanded={drawerOpen}
-          >
-            {drawerOpen ? "📚 Close Language Help" : "📚 Language Help"}
-          </button>
-        </div>
-
         <LanguageHelpDrawer
           open={drawerOpen}
           closed={{
@@ -1529,5 +1528,6 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
       </div>
     </div>
+    </DesktopShell>
   );
 }
