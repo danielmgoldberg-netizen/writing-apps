@@ -511,25 +511,25 @@ function ScoreRing({ score, max = 10 }) {
   const circumference = 2 * Math.PI * radius;
   const progress = score / max;
   const offset = circumference * (1 - progress);
-  const color = score === max ? "#2D5043" : score >= max * 0.6 ? "#7A6B2A" : "#B85C38";
+  const color = score === max ? "#28CD41" : score >= max * 0.6 ? "#FF9500" : "#FF3B30";
   return (
     <div style={{ position: "relative", width: 96, height: 96, flexShrink: 0 }}>
       <svg width="96" height="96" viewBox="0 0 96 96">
-        <circle cx="48" cy="48" r={radius} fill="none" stroke="#E8E0D0" strokeWidth="6" />
+        <circle cx="48" cy="48" r={radius} fill="none" stroke="rgba(0, 0, 0, 0.08)" strokeWidth="7" />
         <circle
-          cx="48" cy="48" r={radius} fill="none" stroke={color} strokeWidth="6"
+          cx="48" cy="48" r={radius} fill="none" stroke={color} strokeWidth="7"
           strokeDasharray={circumference} strokeDashoffset={offset}
           strokeLinecap="round" transform="rotate(-90 48 48)"
-          style={{ transition: "stroke-dashoffset 0.6s ease, stroke 0.3s ease" }}
+          style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), stroke 0.3s ease" }}
         />
       </svg>
       <div style={{
         position: "absolute", inset: 0, display: "flex",
         alignItems: "center", justifyContent: "center", flexDirection: "column",
-        fontFamily: "'Fraunces', serif"
+        fontFamily: "inherit"
       }}>
-        <div style={{ fontSize: 28, fontWeight: 600, color: "#1F1B16", lineHeight: 1 }}>{score}</div>
-        <div style={{ fontSize: 11, color: "#6B5D54", marginTop: 2, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: "0.05em" }}>OF {max}</div>
+        <div style={{ fontSize: "var(--ds-large-title)", fontWeight: 700, color: "var(--ds-label)", lineHeight: 1, letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>{score}</div>
+        <div style={{ fontSize: "var(--ds-footnote)", color: "var(--ds-secondary-label)", marginTop: 3, fontWeight: 600, letterSpacing: "0.04em" }}>OF {max}</div>
       </div>
     </div>
   );
@@ -539,21 +539,22 @@ function CategoryBar({ label, score, max }) {
   const pct = (score / max) * 100;
   const earned = score === max;
   return (
-    <div style={{ marginBottom: 10 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-        <span style={{ fontSize: 13, color: "#1F1B16", fontWeight: 500 }}>{label}</span>
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
+        <span style={{ fontSize: "var(--ds-body)", color: "var(--ds-label)", fontWeight: 500 }}>{label}</span>
         <span style={{
-          fontSize: 12, color: earned ? "#2D5043" : "#8A6F30",
-          fontVariantNumeric: "tabular-nums", fontWeight: 500
+          fontSize: "var(--ds-callout)", color: earned ? "#248A3D" : "#C93400",
+          fontVariantNumeric: "tabular-nums", fontWeight: 600
         }}>
           {score} / {max}
         </span>
       </div>
-      <div style={{ height: 6, background: "#EFE7D6", borderRadius: 3, overflow: "hidden" }}>
+      <div style={{ height: 6, background: "rgba(0, 0, 0, 0.08)", borderRadius: 999, overflow: "hidden" }}>
         <div style={{
           height: "100%", width: `${pct}%`,
-          background: earned ? "#2D5043" : "#C99452",
-          transition: "width 0.5s ease"
+          background: earned ? "#28CD41" : "#FF9500",
+          borderRadius: 999,
+          transition: "width 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)"
         }} />
       </div>
     </div>
@@ -573,9 +574,9 @@ const CATEGORY_EMOJIS = {
 };
 
 const CATEGORY_DOTS = {
-  content: "#B85C38",
-  structure: "#2D5043",
-  language: "#5A4A8A"
+  content: "#007AFF",
+  structure: "#248A3D",
+  language: "#8944AB"
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -830,24 +831,25 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
   const cardStyle = {
     background: "#FFFFFF",
-    border: "1px solid #E8E0D0",
-    borderRadius: 14,
-    padding: "22px 26px",
-    marginBottom: 18
+    border: "0.5px solid rgba(0, 0, 0, 0.1)",
+    borderRadius: 12,
+    padding: "22px 24px",
+    marginBottom: 16,
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.04)"
   };
 
   const stepNumberStyle = {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: 26,
-    height: 26,
+    width: 22,
+    height: 22,
     borderRadius: "50%",
-    background: "#2D5043",
-    color: "#FAF6ED",
-    fontSize: 13,
+    background: "var(--ds-accent)",
+    color: "#FFFFFF",
+    fontSize: "var(--ds-callout)",
     fontWeight: 600,
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontFamily: "inherit",
     marginRight: 10,
     flexShrink: 0
   };
@@ -855,13 +857,23 @@ export default function App({ onBack, firstName, surname, teacher }) {
   const stepTitleStyle = {
     display: "flex",
     alignItems: "center",
-    fontFamily: "'Fraunces', serif",
-    fontSize: 20,
-    fontWeight: 500,
-    color: "#1F1B16",
+    fontFamily: "inherit",
+    fontSize: "var(--ds-title-2)",
+    fontWeight: 600,
+    color: "var(--ds-label)",
     margin: 0,
-    marginBottom: 14,
+    marginBottom: 16,
     letterSpacing: "-0.01em"
+  };
+
+  // Small-caps section labels used throughout the workspace (macOS "Subheadline").
+  const eyebrowStyle = {
+    fontSize: "var(--ds-subheadline)",
+    textTransform: "uppercase",
+    letterSpacing: "0.04em",
+    color: "var(--ds-secondary-label)",
+    fontWeight: 600,
+    marginBottom: 8
   };
 
   const sidebarSections = [
@@ -905,169 +917,162 @@ export default function App({ onBack, firstName, surname, teacher }) {
       }
     >
     <div style={{
-      background: "#FAF6ED",
+      background: "#F5F5F7",
       minHeight: "100%",
       padding: "32px 28px 60px",
-      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-      color: "#1F1B16"
+      fontFamily: "inherit",
+      color: "var(--ds-label)"
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
-
         * { box-sizing: border-box; }
         body { margin: 0; }
 
+        /* Reading-heavy content (texts, inputs, sample sentences) sits at
+           Title 3 size so students aren't reading 13px body copy. */
         .mit-textarea {
           width: 100%;
           min-height: 110px;
-          padding: 14px 16px;
-          border: 1.5px solid #DDD2BC;
-          border-radius: 10px;
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 16px;
-          line-height: 1.55;
-          color: #1F1B16;
-          background: #FDFAF2;
+          padding: 10px 12px;
+          border: 0.5px solid rgba(0, 0, 0, 0.18);
+          border-radius: 8px;
+          font-family: inherit;
+          font-size: var(--ds-title-3);
+          line-height: 1.5;
+          color: var(--ds-label);
+          background: #FFFFFF;
+          box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.06);
           resize: vertical;
           outline: none;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .mit-textarea:focus {
-          border-color: #2D5043;
-          box-shadow: 0 0 0 3px rgba(45, 80, 67, 0.12);
+          border-color: var(--ds-accent);
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
         }
-        .mit-textarea::placeholder { color: #A89B85; }
+        .mit-textarea:disabled { background: #F5F5F7; color: var(--ds-secondary-label); }
+        .mit-textarea::placeholder { color: var(--ds-tertiary-label); }
 
         .mit-select {
           width: 100%;
-          padding: 12px 16px;
-          border: 1.5px solid #DDD2BC;
-          border-radius: 10px;
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 15px;
-          color: #1F1B16;
-          background: #FDFAF2;
+          min-height: 32px;
+          padding: 7px 36px 7px 12px;
+          border: 0.5px solid rgba(0, 0, 0, 0.18);
+          border-radius: 8px;
+          font-family: inherit;
+          font-size: var(--ds-title-3);
+          color: var(--ds-label);
+          background: #FFFFFF;
+          box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.08);
           outline: none;
-          cursor: pointer;
+          cursor: default;
           appearance: none;
-          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%236B5D54' d='M6 8L0 0h12z'/></svg>");
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='12' viewBox='0 0 8 12'><path fill='none' stroke='%23007AFF' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M1 4.5 4 1.5l3 3M1 7.5l3 3 3-3'/></svg>");
           background-repeat: no-repeat;
-          background-position: right 16px center;
-          padding-right: 40px;
+          background-position: right 12px center;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .mit-select:focus {
-          border-color: #2D5043;
-          box-shadow: 0 0 0 3px rgba(45, 80, 67, 0.12);
+          border-color: var(--ds-accent);
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
         }
 
+        /* macOS push buttons: rounded-rect, 13pt medium, large control size. */
         .mit-btn {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 15px;
-          font-weight: 600;
-          padding: 12px 24px;
-          border-radius: 10px;
-          cursor: pointer;
-          transition: transform 0.08s ease, background 0.15s ease, opacity 0.15s ease;
+          font-family: inherit;
+          font-size: var(--ds-body);
+          font-weight: 500;
+          min-height: 32px;
+          padding: 0 18px;
+          border-radius: 8px;
+          cursor: default;
+          transition: filter 0.15s ease, background 0.15s ease, opacity 0.15s ease;
           border: none;
-          letter-spacing: 0.01em;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
         }
-        .mit-btn:active:not(:disabled) { transform: translateY(1px); }
-        .mit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .mit-btn:active:not(:disabled) { filter: brightness(0.92); }
+        .mit-btn:disabled { opacity: 0.4; }
+        .mit-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.35); }
 
-        .mit-btn-primary { background: #2D5043; color: #FAF6ED; }
-        .mit-btn-primary:hover:not(:disabled) { background: #234037; }
+        .mit-btn-primary {
+          background: linear-gradient(180deg, #2B8CFF 0%, #007AFF 100%);
+          color: #FFFFFF;
+          box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.15);
+        }
+        .mit-btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
 
         .mit-btn-secondary {
-          background: transparent;
-          color: #2D5043;
-          border: 1.5px solid #2D5043;
+          background: #FFFFFF;
+          color: var(--ds-label);
+          border: 0.5px solid rgba(0, 0, 0, 0.15);
+          box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.08);
         }
-        .mit-btn-secondary:hover:not(:disabled) { background: rgba(45, 80, 67, 0.06); }
+        .mit-btn-secondary:hover:not(:disabled) { background: #FAFAFA; }
 
         .mit-btn-template {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 13px;
-          font-weight: 600;
-          color: #2D5043;
-          background: rgba(45, 80, 67, 0.08);
-          border: 1px solid rgba(45, 80, 67, 0.3);
-          border-radius: 8px;
-          padding: 6px 12px;
-          cursor: pointer;
-          transition: background 0.15s ease, transform 0.08s ease;
+          font-family: inherit;
+          font-size: var(--ds-body);
+          font-weight: 500;
+          color: var(--ds-accent);
+          background: rgba(0, 122, 255, 0.1);
+          border: none;
+          border-radius: 6px;
+          min-height: 26px;
+          padding: 0 12px;
+          cursor: default;
+          transition: background 0.15s ease;
         }
-        .mit-btn-template:hover { background: rgba(45, 80, 67, 0.16); }
-        .mit-btn-template:active { transform: translateY(1px); }
+        .mit-btn-template:hover { background: rgba(0, 122, 255, 0.16); }
+        .mit-btn-template:active { background: rgba(0, 122, 255, 0.22); }
 
         .mit-text-body {
-          font-size: 15px;
-          line-height: 1.7;
-          color: #2A2520;
+          font-size: var(--ds-title-3);
+          line-height: 1.6;
+          color: var(--ds-label);
         }
         .mit-text-body p { margin: 0 0 12px 0; }
         .mit-text-body p:last-child { margin-bottom: 0; }
 
         .mit-spin {
           display: inline-block;
-          width: 14px;
-          height: 14px;
-          border: 2px solid rgba(250, 246, 237, 0.4);
-          border-top-color: #FAF6ED;
+          width: 12px;
+          height: 12px;
+          border: 2px solid rgba(255, 255, 255, 0.4);
+          border-top-color: #FFFFFF;
           border-radius: 50%;
-          animation: mit-spin 0.7s linear infinite;
+          animation: mit-spin 0.8s linear infinite;
           margin-right: 8px;
-          vertical-align: -2px;
         }
         @keyframes mit-spin { to { transform: rotate(360deg); } }
 
-        .mit-fade-in { animation: mit-fade-in 0.4s ease both; }
+        .mit-fade-in { animation: mit-fade-in 0.45s var(--ds-ease) both; }
         @keyframes mit-fade-in {
           from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
         }
-
-        .mit-lang-help-row {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 12px;
-        }
-        .mit-lang-help-btn {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 13.5px;
-          font-weight: 600;
-          color: #2D5043;
-          background: rgba(45, 80, 67, 0.08);
-          border: 1px solid rgba(45, 80, 67, 0.3);
-          border-radius: 8px;
-          padding: 7px 14px;
-          cursor: pointer;
-          transition: background 0.15s ease, transform 0.08s ease;
-        }
-        .mit-lang-help-btn:hover { background: rgba(45, 80, 67, 0.16); }
-        .mit-lang-help-btn:active { transform: translateY(1px); }
 
         .mit-drawer-wrap {
           max-height: 0;
           overflow: hidden;
           opacity: 0;
           margin-bottom: 0;
-          transition: max-height 0.4s ease, opacity 0.3s ease, margin-bottom 0.4s ease;
+          transition: max-height 0.4s var(--ds-ease), opacity 0.3s ease, margin-bottom 0.4s var(--ds-ease);
         }
         .mit-drawer-wrap.open {
           max-height: 3000px;
           opacity: 1;
-          margin-bottom: 18px;
+          margin-bottom: 16px;
         }
         .mit-drawer {
-          background: #FAF6ED;
-          border: 1px solid #E8E0D0;
-          border-top: 3px solid #2D5043;
-          border-radius: 14px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-          padding: 4px 24px 10px;
+          background: #FFFFFF;
+          border: 0.5px solid rgba(0, 0, 0, 0.1);
+          border-radius: 12px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.04);
+          padding: 2px 20px 8px;
         }
 
-        .mit-lang-section { border-bottom: 1px solid #E8E0D0; }
+        .mit-lang-section { border-bottom: 0.5px solid var(--ds-separator); }
         .mit-lang-section:last-child { border-bottom: none; }
         .mit-lang-sec-toggle {
           width: 100%;
@@ -1077,55 +1082,56 @@ export default function App({ onBack, firstName, surname, teacher }) {
           gap: 10px;
           background: none;
           border: none;
-          cursor: pointer;
-          padding: 13px 0;
+          cursor: default;
+          padding: 12px 0;
           text-align: left;
+          font-family: inherit;
         }
         .mit-lang-sec-title {
-          font-family: 'Fraunces', serif;
-          font-size: 15.5px;
-          font-weight: 500;
-          color: #1F1B16;
+          font-family: inherit;
+          font-size: var(--ds-headline);
+          font-weight: 600;
+          color: var(--ds-label);
         }
         .mit-chevron {
-          color: #2D5043;
-          font-size: 13px;
+          color: var(--ds-secondary-label);
+          font-size: var(--ds-callout);
           flex-shrink: 0;
-          transition: transform 0.25s ease;
+          transition: transform 0.25s var(--ds-ease);
         }
         .mit-chevron.open { transform: rotate(180deg); }
         .mit-lang-sec-body {
           max-height: 0;
           overflow: hidden;
           opacity: 0;
-          transition: max-height 0.35s ease, opacity 0.25s ease;
+          transition: max-height 0.35s var(--ds-ease), opacity 0.25s ease;
         }
         .mit-lang-sec-body.open {
           max-height: 1400px;
           opacity: 1;
         }
         .mit-lang-sec-inner {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 13.5px;
-          line-height: 1.6;
-          color: #2A2520;
+          font-family: inherit;
+          font-size: var(--ds-body);
+          line-height: 1.55;
+          color: var(--ds-label);
           padding: 0 2px 14px;
         }
-        .mit-lang-group { margin-bottom: 10px; }
+        .mit-lang-group { margin-bottom: 12px; }
         .mit-lang-group:last-child { margin-bottom: 0; }
         .mit-lang-group-label {
-          font-size: 12px;
+          font-size: var(--ds-subheadline);
           font-weight: 600;
-          color: #6B5D54;
+          color: var(--ds-secondary-label);
           text-transform: uppercase;
-          letter-spacing: 0.06em;
-          margin-bottom: 5px;
+          letter-spacing: 0.04em;
+          margin-bottom: 6px;
         }
         .mit-conn-pill {
           display: inline-block;
-          background: #E8EFE9;
-          color: #2D5043;
-          font-size: 12.5px;
+          background: rgba(0, 0, 0, 0.05);
+          color: var(--ds-label);
+          font-size: var(--ds-callout);
           font-weight: 500;
           padding: 3px 10px;
           border-radius: 999px;
@@ -1134,28 +1140,34 @@ export default function App({ onBack, firstName, surname, teacher }) {
         .mit-lang-list { margin: 0; padding-left: 18px; }
         .mit-lang-list li { margin-bottom: 5px; }
         .mit-lang-list li:last-child { margin-bottom: 0; }
-        .mit-wrong { color: #B85C38; font-weight: 600; }
-        .mit-right { color: #2D5043; font-weight: 600; }
+        .mit-wrong { color: #D70015; font-weight: 600; }
+        .mit-right { color: #248A3D; font-weight: 600; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .mit-fade-in, .mit-spin { animation-duration: 0.01ms; }
+          .mit-drawer-wrap, .mit-lang-sec-body, .mit-chevron { transition: none; }
+        }
       `}</style>
 
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
-        <header style={{ marginBottom: 24, paddingLeft: 6 }}>
+        <header style={{ marginBottom: 24, paddingLeft: 4 }}>
           <h1 style={{
-            fontFamily: "'Fraunces', serif",
-            fontSize: 32,
-            fontWeight: 500,
+            fontFamily: "inherit",
+            fontSize: "var(--ds-large-title)",
+            fontWeight: 700,
             margin: 0,
             letterSpacing: "-0.02em",
-            color: "#1F1B16"
+            lineHeight: 1.2,
+            color: "var(--ds-label)"
           }}>
             Opinion Writing Tutor
           </h1>
           <p style={{
-            fontSize: 15,
-            color: "#6B5D54",
+            fontSize: "var(--ds-title-3)",
+            color: "var(--ds-secondary-label)",
             margin: "6px 0 0 0",
-            lineHeight: 1.5,
+            lineHeight: 1.45,
             maxWidth: 560
           }}>
             Practice writing two sentences about whether you liked a text and why. Get friendly feedback, then try again.
@@ -1205,12 +1217,13 @@ export default function App({ onBack, firstName, surname, teacher }) {
               👀 Read the text
             </h2>
             <div style={{
-              fontFamily: "'Fraunces', serif",
-              fontSize: 22,
-              fontWeight: 500,
+              fontFamily: "inherit",
+              fontSize: "var(--ds-title-1)",
+              fontWeight: 700,
               marginBottom: 14,
-              color: "#1F1B16",
-              letterSpacing: "-0.01em"
+              color: "var(--ds-label)",
+              letterSpacing: "-0.015em",
+              lineHeight: 1.25
             }}>
               {selectedText.title}
             </div>
@@ -1218,8 +1231,8 @@ export default function App({ onBack, firstName, surname, teacher }) {
               maxHeight: 320,
               overflowY: "auto",
               padding: "16px 20px",
-              background: "#FDFAF2",
-              border: "1px solid #EDE3CE",
+              background: "#F5F5F7",
+              border: "none",
               borderRadius: 10
             }}>
               <div className="mit-text-body">
@@ -1239,36 +1252,30 @@ export default function App({ onBack, firstName, surname, teacher }) {
             </h2>
 
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 12, color: "#6B5D54", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10, fontWeight: 600 }}>
+              <div style={{ ...eyebrowStyle, marginBottom: 10 }}>
                 📋 Choose ONE of these templates
               </div>
 
               <div style={{
-                background: "#F4EEDC",
-                border: "1px dashed #C9B98F",
+                background: "#F5F5F7",
+                border: "none",
                 borderRadius: 10,
-                padding: "12px 16px",
+                padding: "14px 16px",
                 marginBottom: 10
               }}>
-                <div style={{
-                  fontSize: 11.5,
-                  color: "#2D5043",
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  marginBottom: 6
-                }}>
+                <div style={{ ...eyebrowStyle, color: "var(--ds-accent)", marginBottom: 6 }}>
                   Template 1 · two reasons
                 </div>
                 <div style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontSize: 16,
-                  lineHeight: 1.55,
-                  color: "#1F1B16"
+                  fontFamily: "inherit",
+                  fontSize: "var(--ds-title-3)",
+                  fontWeight: 500,
+                  lineHeight: 1.5,
+                  color: "var(--ds-label)"
                 }}>
-                  I liked / didn't like this text for two main reasons. <span style={{ color: "#2D5043", fontStyle: "italic" }}>Firstly,</span> <span style={{ color: "#B85C38" }}>___</span>. <span style={{ color: "#2D5043", fontStyle: "italic" }}>Secondly,</span> <span style={{ color: "#B85C38" }}>___</span>.
+                  I liked / didn't like this text for two main reasons. <span style={{ color: "var(--ds-accent)", fontStyle: "italic" }}>Firstly,</span> <span style={{ color: "#C93400" }}>___</span>. <span style={{ color: "var(--ds-accent)", fontStyle: "italic" }}>Secondly,</span> <span style={{ color: "#C93400" }}>___</span>.
                 </div>
-                <div style={{ fontSize: 12, color: "#6B5D54", marginTop: 8, lineHeight: 1.5 }}>
+                <div style={{ fontSize: "var(--ds-callout)", color: "var(--ds-secondary-label)", marginTop: 8, lineHeight: 1.5 }}>
                   Other connectors you can use: <em>First of all, To begin with, In addition, Also.</em>
                 </div>
                 <div style={{ marginTop: 10, textAlign: "right" }}>
@@ -1283,8 +1290,8 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
               <div style={{
                 textAlign: "center",
-                fontSize: 12,
-                color: "#8A7B6A",
+                fontSize: "var(--ds-subheadline)",
+                color: "var(--ds-secondary-label)",
                 letterSpacing: "0.15em",
                 margin: "8px 0",
                 fontWeight: 600
@@ -1293,30 +1300,24 @@ export default function App({ onBack, firstName, surname, teacher }) {
               </div>
 
               <div style={{
-                background: "#F4EEDC",
-                border: "1px dashed #C9B98F",
+                background: "#F5F5F7",
+                border: "none",
                 borderRadius: 10,
-                padding: "12px 16px"
+                padding: "14px 16px"
               }}>
-                <div style={{
-                  fontSize: 11.5,
-                  color: "#2D5043",
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  marginBottom: 6
-                }}>
+                <div style={{ ...eyebrowStyle, color: "var(--ds-accent)", marginBottom: 6 }}>
                   Template 2 · reason and example
                 </div>
                 <div style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontSize: 16,
-                  lineHeight: 1.55,
-                  color: "#1F1B16"
+                  fontFamily: "inherit",
+                  fontSize: "var(--ds-title-3)",
+                  fontWeight: 500,
+                  lineHeight: 1.5,
+                  color: "var(--ds-label)"
                 }}>
-                  I liked / didn't like this text <span style={{ color: "#2D5043", fontStyle: "italic" }}>because</span> <span style={{ color: "#B85C38" }}>___</span>. <span style={{ color: "#2D5043", fontStyle: "italic" }}>For example,</span> <span style={{ color: "#B85C38" }}>___</span>.
+                  I liked / didn't like this text <span style={{ color: "var(--ds-accent)", fontStyle: "italic" }}>because</span> <span style={{ color: "#C93400" }}>___</span>. <span style={{ color: "var(--ds-accent)", fontStyle: "italic" }}>For example,</span> <span style={{ color: "#C93400" }}>___</span>.
                 </div>
-                <div style={{ fontSize: 12, color: "#6B5D54", marginTop: 8, lineHeight: 1.5 }}>
+                <div style={{ fontSize: "var(--ds-callout)", color: "var(--ds-secondary-label)", marginTop: 8, lineHeight: 1.5 }}>
                   Other connectors you can use: <em>For instance.</em>
                 </div>
                 <div style={{ marginTop: 10, textAlign: "right" }}>
@@ -1332,10 +1333,10 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
             <div style={{
               marginBottom: 12,
-              fontSize: 12.5,
-              color: "#7A3818",
-              background: "#FBF1E5",
-              border: "1px solid #E8C9A8",
+              fontSize: "var(--ds-callout)",
+              color: "#A04100",
+              background: "rgba(255, 149, 0, 0.12)",
+              border: "none",
               borderRadius: 8,
               padding: "10px 12px",
               lineHeight: 1.5
@@ -1356,7 +1357,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
             />
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, flexWrap: "wrap", gap: 10 }}>
-              <div style={{ fontSize: 13, color: "#6B5D54" }}>
+              <div style={{ fontSize: "var(--ds-body)", color: "var(--ds-secondary-label)" }}>
                 {attempts.length === 0
                   ? "This will be your first attempt."
                   : `Attempt ${attemptNumber}. Previous attempts: ${attempts.length}.`}
@@ -1375,11 +1376,11 @@ export default function App({ onBack, firstName, surname, teacher }) {
               <div style={{
                 marginTop: 14,
                 padding: "10px 14px",
-                background: "#F8E5DC",
-                border: "1px solid #E0B8A0",
+                background: "rgba(255, 59, 48, 0.08)",
+                border: "none",
                 borderRadius: 8,
-                fontSize: 13.5,
-                color: "#7A3818"
+                fontSize: "var(--ds-body)",
+                color: "#D70015"
               }}>
                 {error}
               </div>
@@ -1390,7 +1391,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
         {currentFeedback && (
           <section
             ref={feedbackRef}
-            style={{ ...cardStyle, borderColor: "#D4C7A8" }}
+            style={{ ...cardStyle, borderColor: "rgba(0, 0, 0, 0.14)" }}
             className="mit-fade-in"
           >
             <h2 style={stepTitleStyle}>
@@ -1402,16 +1403,17 @@ export default function App({ onBack, firstName, surname, teacher }) {
               <ScoreRing score={currentFeedback.totalScore} />
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontSize: 18,
-                  fontWeight: 500,
-                  color: "#1F1B16",
-                  lineHeight: 1.4,
+                  fontFamily: "inherit",
+                  fontSize: "var(--ds-title-2)",
+                  fontWeight: 600,
+                  color: "var(--ds-label)",
+                  lineHeight: 1.35,
+                  letterSpacing: "-0.01em",
                   marginBottom: 4
                 }}>
                   {currentFeedback.encouragement}
                 </div>
-                <div style={{ fontSize: 13, color: "#6B5D54" }}>
+                <div style={{ fontSize: "var(--ds-body)", color: "var(--ds-secondary-label)" }}>
                   Attempt {attempts.length} of unlimited.{sessionBest > 0 && ` Best so far: ${sessionBest}/10.`}
                 </div>
               </div>
@@ -1425,41 +1427,34 @@ export default function App({ onBack, firstName, surname, teacher }) {
 
             {currentFeedback.issues && currentFeedback.issues.length > 0 && (
               <div style={{ marginBottom: 18 }}>
-                <div style={{
-                  fontSize: 12,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  color: "#6B5D54",
-                  fontWeight: 600,
-                  marginBottom: 10
-                }}>
+                <div style={eyebrowStyle}>
                   🔍 Things to look at
                 </div>
                 {currentFeedback.issues.map((issue, i) => (
                   <div key={i} style={{
                     padding: "12px 14px 12px 16px",
-                    background: "#FDFAF2",
-                    border: "1px solid #EDE3CE",
-                    borderLeft: `3px solid ${CATEGORY_DOTS[issue.category] || "#6B5D54"}`,
+                    background: "#F5F5F7",
+                    border: "none",
+                    borderLeft: `3px solid ${CATEGORY_DOTS[issue.category] || "rgba(0, 0, 0, 0.5)"}`,
                     borderRadius: 8,
                     marginBottom: 8
                   }}>
                     <div style={{
-                      fontSize: 11.5,
+                      fontSize: "var(--ds-subheadline)",
                       textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      color: CATEGORY_DOTS[issue.category] || "#6B5D54",
+                      letterSpacing: "0.04em",
+                      color: CATEGORY_DOTS[issue.category] || "var(--ds-secondary-label)",
                       fontWeight: 600,
                       marginBottom: 4
                     }}>
                       <span style={{ marginRight: 6 }}>{CATEGORY_EMOJIS[issue.category] || "📝"}</span>
                       {CATEGORY_LABELS[issue.category] || issue.category}
                     </div>
-                    <div style={{ fontSize: 14.5, color: "#1F1B16", marginBottom: 4, lineHeight: 1.5 }}>
+                    <div style={{ fontSize: "var(--ds-title-3)", color: "var(--ds-label)", marginBottom: 4, lineHeight: 1.45 }}>
                       {issue.what}
                     </div>
                     {issue.hint && (
-                      <div style={{ fontSize: 13.5, color: "#5A4D43", lineHeight: 1.5, fontStyle: "italic" }}>
+                      <div style={{ fontSize: "var(--ds-body)", color: "var(--ds-secondary-label)", lineHeight: 1.5 }}>
                         💡 Hint: {issue.hint}
                       </div>
                     )}
@@ -1471,31 +1466,24 @@ export default function App({ onBack, firstName, surname, teacher }) {
             {currentFeedback.sampleSentence && (
               <div style={{
                 padding: "14px 16px",
-                background: "#E8EFE9",
-                border: "1px solid #B5C9B8",
+                background: "rgba(40, 205, 65, 0.1)",
+                border: "none",
                 borderRadius: 10,
                 marginBottom: 18
               }}>
-                <div style={{
-                  fontSize: 11.5,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  color: "#2D5043",
-                  fontWeight: 600,
-                  marginBottom: 6
-                }}>
+                <div style={{ ...eyebrowStyle, color: "#248A3D" }}>
                   ✨ One way to write it
                 </div>
                 <div style={{
-                  fontFamily: "'Fraunces', serif",
-                  fontSize: 16,
-                  lineHeight: 1.55,
-                  color: "#1F1B16",
-                  fontStyle: "italic"
+                  fontFamily: "inherit",
+                  fontSize: "var(--ds-title-3)",
+                  fontWeight: 500,
+                  lineHeight: 1.5,
+                  color: "var(--ds-label)"
                 }}>
                   "{currentFeedback.sampleSentence}"
                 </div>
-                <div style={{ fontSize: 12.5, color: "#5A4D43", marginTop: 8 }}>
+                <div style={{ fontSize: "var(--ds-callout)", color: "var(--ds-secondary-label)", marginTop: 8 }}>
                   This is one example. There are many other good answers.
                 </div>
               </div>
@@ -1520,22 +1508,22 @@ export default function App({ onBack, firstName, surname, teacher }) {
               return (
                 <div style={{
                   padding: "14px 16px",
-                  background: "#F4EEDC",
-                  border: "1px solid #D4C7A8",
+                  background: "rgba(0, 122, 255, 0.07)",
+                  border: "none",
                   borderRadius: 10,
                   marginBottom: 14
                 }}>
                   <div style={{
-                    fontFamily: "'Fraunces', serif",
-                    fontSize: 16,
-                    fontWeight: 500,
-                    color: "#1F1B16",
-                    lineHeight: 1.45,
+                    fontFamily: "inherit",
+                    fontSize: "var(--ds-title-3)",
+                    fontWeight: 600,
+                    color: "var(--ds-label)",
+                    lineHeight: 1.4,
                     marginBottom: 4
                   }}>
                     {headline}
                   </div>
-                  <div style={{ fontSize: 13.5, color: "#5A4D43", lineHeight: 1.55 }}>
+                  <div style={{ fontSize: "var(--ds-body)", color: "var(--ds-secondary-label)", lineHeight: 1.5 }}>
                     {body}
                   </div>
                 </div>
@@ -1543,14 +1531,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
             })()}
 
             <div style={{ marginBottom: 14 }}>
-              <div style={{
-                fontSize: 11.5,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "#6B5D54",
-                fontWeight: 600,
-                marginBottom: 6
-              }}>
+              <div style={eyebrowStyle}>
                 {currentFeedback.totalScore < 10
                   ? "✏️ Edit your writing, then try again"
                   : "✨ Try writing another version"}
@@ -1569,11 +1550,11 @@ export default function App({ onBack, firstName, surname, teacher }) {
                 <div style={{
                   marginTop: 10,
                   padding: "10px 14px",
-                  background: "#F8E5DC",
-                  border: "1px solid #E0B8A0",
+                  background: "rgba(255, 59, 48, 0.08)",
+                  border: "none",
                   borderRadius: 8,
-                  fontSize: 13.5,
-                  color: "#7A3818"
+                  fontSize: "var(--ds-body)",
+                  color: "#D70015"
                 }}>
                   {error}
                 </div>
@@ -1603,10 +1584,9 @@ export default function App({ onBack, firstName, surname, teacher }) {
         {!selectedText && (
           <div style={{
             textAlign: "center",
-            color: "#8A7B6A",
-            fontSize: 13.5,
-            marginTop: 30,
-            fontStyle: "italic"
+            color: "var(--ds-secondary-label)",
+            fontSize: "var(--ds-body)",
+            marginTop: 30
           }}>
             👆 Pick a text above to begin.
           </div>
