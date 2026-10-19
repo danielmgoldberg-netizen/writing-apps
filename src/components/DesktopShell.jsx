@@ -11,6 +11,32 @@ import { useState, useEffect } from "react";
 
 const NARROW_QUERY = "(max-width: 760px)";
 
+// Design tokens shared by the shell and by screens rendered outside it (App.jsx).
+// Drop into any CSS rule: `.my-root { ${DS_TOKENS} }`.
+export const DS_FONT_STACK = `-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif`;
+export const DS_TOKENS = `
+  /* macOS type scale (pt → px) */
+  --ds-large-title: 26px;
+  --ds-title-1: 22px;
+  --ds-title-2: 17px;
+  --ds-title-3: 15px;
+  --ds-headline: 13px;
+  --ds-body: 13px;
+  --ds-callout: 12px;
+  --ds-subheadline: 11px;
+  --ds-footnote: 10px;
+
+  --ds-label: #1D1D1F;
+  --ds-secondary-label: rgba(0, 0, 0, 0.5);
+  --ds-tertiary-label: rgba(0, 0, 0, 0.26);
+  --ds-separator: rgba(0, 0, 0, 0.1);
+  --ds-accent: #007AFF;
+  --ds-window-bg: #FFFFFF;
+  --ds-sidebar-bg: rgba(236, 236, 238, 0.78);
+  --ds-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ds-sidebar-w: 248px;
+`;
+
 export function SidebarIcon({ name }) {
   const paths = {
     back: <path d="M10 3.5 5.5 8l4.5 4.5" />,
@@ -54,27 +80,7 @@ export default function DesktopShell({ title, subtitle, sections, footer, toolba
     <div className={"ds-window" + (sidebarOpen ? "" : " ds-collapsed")}>
       <style>{`
         .ds-window {
-          /* macOS type scale (pt → px) */
-          --ds-large-title: 26px;
-          --ds-title-1: 22px;
-          --ds-title-2: 17px;
-          --ds-title-3: 15px;
-          --ds-headline: 13px;
-          --ds-body: 13px;
-          --ds-callout: 12px;
-          --ds-subheadline: 11px;
-          --ds-footnote: 10px;
-
-          --ds-label: #1D1D1F;
-          --ds-secondary-label: rgba(0, 0, 0, 0.5);
-          --ds-tertiary-label: rgba(0, 0, 0, 0.26);
-          --ds-separator: rgba(0, 0, 0, 0.1);
-          --ds-accent: #007AFF;
-          --ds-window-bg: #FFFFFF;
-          --ds-sidebar-bg: rgba(236, 236, 238, 0.78);
-          --ds-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-          --ds-sidebar-w: 248px;
-
+          ${DS_TOKENS}
           position: fixed;
           inset: 0;
           display: grid;
@@ -82,7 +88,7 @@ export default function DesktopShell({ title, subtitle, sections, footer, toolba
           grid-template-rows: 100%;
           background: var(--ds-window-bg);
           color: var(--ds-label);
-          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-family: ${DS_FONT_STACK};
           font-size: var(--ds-body);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
