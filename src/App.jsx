@@ -228,7 +228,7 @@ export default function App() {
           <header className="app-header">
             <div className="app-icon" aria-hidden="true">✍️</div>
             <h1 className="app-title">Writing Practice</h1>
-            <p className="app-subtitle">Sign in once to use both exercises.</p>
+            <p className="app-subtitle">Sign in once to work with both tutors.</p>
           </header>
 
           <section className="app-card">
@@ -302,14 +302,14 @@ export default function App() {
       <div className="app-panel">
         <header className="app-header">
           <div className="app-icon" aria-hidden="true">✍️</div>
-          <h1 className="app-title">Writing Practice</h1>
-          <p className="app-subtitle">Choose an exercise to begin.</p>
+          <h1 className="app-title">Writing Practice Dashboard</h1>
+          <p className="app-subtitle">Choose a tutor to work with.</p>
         </header>
 
         <button className="app-exercise" onClick={() => setCurrent("main-idea")}>
           <div className="app-exercise-icon" style={{ background: "rgba(0, 122, 255, 0.12)" }} aria-hidden="true">💭</div>
           <div className="app-exercise-body">
-            <div className="app-exercise-title">Main Idea Writing</div>
+            <div className="app-exercise-title">Main Idea Writing Tutor</div>
             <div className="app-exercise-desc">
               Write one sentence describing the main idea of a text. Earn up to 5 points.
             </div>
@@ -320,7 +320,7 @@ export default function App() {
         <button className="app-exercise" onClick={() => setCurrent("opinion")}>
           <div className="app-exercise-icon" style={{ background: "rgba(175, 82, 222, 0.12)" }} aria-hidden="true">🗣️</div>
           <div className="app-exercise-body">
-            <div className="app-exercise-title">Opinion Writing</div>
+            <div className="app-exercise-title">Opinion Writing Tutor</div>
             <div className="app-exercise-desc">
               Write two sentences sharing your opinion about a text. Earn up to 10 points.
             </div>

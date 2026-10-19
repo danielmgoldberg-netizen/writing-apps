@@ -885,7 +885,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
   const sidebarSections = [
     {
       label: "Exercise",
-      items: [{ id: "menu", label: "All exercises", icon: "back", onClick: onBack }]
+      items: [{ id: "menu", label: "Writing Dashboard", icon: "back", onClick: onBack }]
     },
     {
       // Page structure only; choosing a text happens in the Step 1 dropdown.
@@ -905,10 +905,10 @@ export default function App({ onBack, firstName, surname, teacher }) {
       subtitle={selectedText ? selectedText.title : "Choose a text to begin"}
       sections={sidebarSections}
       onClose={onBack}
-      footer={
+      sidebarHeader={
         <>
-          <div style={{ color: "#1D1D1F", fontWeight: 600 }}>{firstName} {surname}</div>
-          <div>{teacher}'s class</div>
+          <div>👤 {firstName} {surname}</div>
+          <div>📚 {teacher}'s class</div>
         </>
       }
       toolbarActions={

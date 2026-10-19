@@ -64,7 +64,7 @@ export function SidebarIcon({ name }) {
   );
 }
 
-export default function DesktopShell({ title, subtitle, sections, footer, toolbarActions, onClose, children }) {
+export default function DesktopShell({ title, subtitle, sidebarHeader, sections, footer, toolbarActions, onClose, children }) {
   const isNarrow = () => typeof window !== "undefined" && window.matchMedia(NARROW_QUERY).matches;
   const [sidebarOpen, setSidebarOpen] = useState(() => !isNarrow());
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -165,6 +165,15 @@ export default function DesktopShell({ title, subtitle, sections, footer, toolba
           flex-direction: column;
           padding-top: 52px;
         }
+        .ds-sidebar-header {
+          padding: 4px 20px 12px;
+          border-bottom: 1px solid var(--apple-border);
+          font-size: var(--ds-callout);
+          line-height: 1.6;
+          color: var(--ds-secondary-label);
+          overflow: hidden;
+        }
+        .ds-sidebar-header > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ds-sidebar-scroll {
           flex: 1;
           overflow-y: auto;
@@ -322,6 +331,7 @@ export default function DesktopShell({ title, subtitle, sections, footer, toolba
 
       <aside className="ds-sidebar" aria-hidden={!sidebarOpen} inert={sidebarOpen ? undefined : ""}>
         <div className="ds-sidebar-inner">
+          {sidebarHeader && <div className="ds-sidebar-header">{sidebarHeader}</div>}
           <nav className="ds-sidebar-scroll">
             {sections.map(section => (
               <div className="ds-section" key={section.label}>
