@@ -956,6 +956,8 @@ export default function App({ onBack, firstName, surname, teacher }) {
           box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
         }
         .mit-textarea:disabled { background: #F5F5F7; color: var(--ds-secondary-label); }
+        .mit-textarea.is-locked { background: #F0EDE8; color: var(--ds-secondary-label); cursor: default; }
+        .mit-textarea.is-locked:focus { border-color: rgba(0, 0, 0, 0.18); box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.06); }
         .mit-textarea::placeholder { color: var(--ds-tertiary-label); }
 
         .mit-select {
@@ -1439,7 +1441,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
             </div>
 
             <textarea
-              className="mit-textarea"
+              className={currentFeedback ? "mit-textarea is-locked" : "mit-textarea"}
               style={{ minHeight: 150 }}
               value={studentSentence}
               onChange={(e) => {
@@ -1448,7 +1450,13 @@ export default function App({ onBack, firstName, surname, teacher }) {
               }}
               placeholder="✍️ Write your two sentences here..."
               disabled={isLoading}
+              readOnly={!!currentFeedback}
             />
+            {currentFeedback && (
+              <div style={{ marginTop: 6, fontSize: "var(--ds-callout)", color: "var(--ds-secondary-label)" }}>
+                ✏️ Edit your sentences in the feedback section below.
+              </div>
+            )}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, flexWrap: "wrap", gap: 10 }}>
               <div style={{ fontSize: "var(--ds-body)", color: "var(--ds-secondary-label)" }}>
@@ -1459,7 +1467,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
               <button
                 className="mit-btn mit-btn-primary"
                 onClick={handleSubmit}
-                disabled={isLoading || !studentSentence.trim()}
+                disabled={isLoading || !!currentFeedback || !studentSentence.trim()}
               >
                 {isLoading && <span className="mit-spin" />}
                 {isLoading ? "Checking..." : "Get feedback"}
