@@ -11,13 +11,13 @@ import { useRef, useEffect } from "react";
 // The record holds: Student Name, Teacher, Timestamp (session end), App,
 // Text Title, Attempts, Score (best score in the session), Max Score.
 // ─────────────────────────────────────────────────────────────────────────────
-const LOGGER_URL = "https://writing-app-logger.vercel.app/api/log";
+const DEFAULT_LOGGER_URL = "https://writing-app-logger.vercel.app/api/log";
 
-function sendSession(payload) {
+function sendSession(url, payload) {
   try {
     // text/plain keeps this a "simple" cross-origin request (no CORS
     // preflight), and keepalive lets it finish even if the tab is closing.
-    fetch(LOGGER_URL, {
+    fetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify(payload),
@@ -26,9 +26,9 @@ function sendSession(payload) {
   } catch (e) { /* never surface logging problems to students */ }
 }
 
-export default function useSessionLog({ app, maxScore, firstName, surname, teacher }) {
+export default function useSessionLog({ app, maxScore, firstName, surname, teacher, url = DEFAULT_LOGGER_URL }) {
   const identity = useRef({});
-  identity.current = { app, maxScore, firstName, surname, teacher };
+  identity.current = { app, maxScore, firstName, surname, teacher, url };
 
   const session = useRef({ textTitle: "", attempts: 0, best: 0, logged: false });
 
@@ -39,7 +39,7 @@ export default function useSessionLog({ app, maxScore, firstName, surname, teach
     if (s.attempts > 0 && !s.logged) {
       s.logged = true;
       const id = identity.current;
-      sendSession({
+      sendSession(id.url, {
         "Student Name": `${id.firstName || ""} ${id.surname || ""}`.trim(),
         "Teacher":      String(id.teacher || ""),
         "Timestamp":    new Date().toISOString(),
