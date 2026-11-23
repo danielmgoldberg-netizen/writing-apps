@@ -1,33 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import DesktopShell from "../components/DesktopShell.jsx";
+import useSessionLog from "../hooks/useSessionLog.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LOGGING CONFIG
-// Submissions are sent to the Vercel proxy which writes to Airtable.
-// ─────────────────────────────────────────────────────────────────────────────
-const LOGGER_URL = "https://writing-app-logger.vercel.app/api/log";
-
-function logToAirtable({ firstName, surname, teacher, textTitle, attemptNumber, submission, totalScore }) {
-  setTimeout(() => {
-    try {
-      fetch(LOGGER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          "Student Name": String(`${firstName} ${surname}`.trim()),
-          "Teacher":      String(teacher      || ""),
-          "Timestamp":    new Date().toISOString(),
-          "App":          "opinion",
-          "Text Title":   String(textTitle    || ""),
-          "Attempts":     Number(attemptNumber || 1),
-          "Submission":   String(submission   || "").slice(0, 500),
-          "Score":        Number(totalScore   || 0),
-          "Max Score":    10
-        })
-      }).catch(() => {});
-    } catch (e) { /* never surface */ }
-  }, 0);
-}
+// Logging: one Airtable record per session, see ../hooks/useSessionLog.js
 
 const TEXTS = [
   {
@@ -664,6 +639,8 @@ function LanguageHelpDrawer({ open, closed, toggle }) {
 }
 
 export default function App({ onBack, firstName, surname, teacher }) {
+  const sessionLog = useSessionLog({ app: "opinion", maxScore: 10, firstName, surname, teacher });
+  const handleBack = () => { sessionLog.end(); onBack(); };
   const [sessionBest, setSessionBest] = useState(0);
   const [selectedTextId, setSelectedTextId] = useState("");
   const [studentSentence, setStudentSentence] = useState("");
@@ -782,15 +759,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
       setCurrentFeedback(feedback);
       setSessionBest(prev => Math.max(prev, feedback.totalScore));
       setAttempts(prev => [...prev, { sentence: trimmed, feedback }]);
-      logToAirtable({
-        firstName,
-        surname,
-        teacher,
-        textTitle:     selectedText.title,
-        attemptNumber: attempts.length + 1,
-        submission:    trimmed,
-        totalScore:    feedback.totalScore,
-      });
+      sessionLog.recordAttempt(selectedText.title, feedback.totalScore);
       setStudentSentence(trimmed);
       setEditText(trimmed);
     } else {
@@ -807,6 +776,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
   };
 
   const handleNewText = () => {
+    sessionLog.end();
     setSelectedTextId("");
     setStudentSentence("");
     setAttempts([]);
@@ -817,6 +787,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
   };
 
   const handleSelectText = (id) => {
+    sessionLog.end();
     setSelectedTextId(id);
     setStudentSentence("");
     setAttempts([]);
@@ -885,7 +856,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
   const sidebarSections = [
     {
       label: "Exercise",
-      items: [{ id: "menu", label: "Writing Dashboard", icon: "back", onClick: onBack }]
+      items: [{ id: "menu", label: "Writing Dashboard", icon: "back", onClick: handleBack }]
     },
     {
       // Page structure only; choosing a text happens in the Step 1 dropdown.
@@ -904,7 +875,7 @@ export default function App({ onBack, firstName, surname, teacher }) {
       title="Opinion Writing Tutor"
       subtitle={selectedText ? selectedText.title : "Choose a text to begin"}
       sections={sidebarSections}
-      onClose={onBack}
+      onClose={handleBack}
       sidebarHeader={
         <>
           <div>👤 {firstName} {surname}</div>
